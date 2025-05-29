@@ -1,0 +1,501 @@
+{% extends 'base.html' %}
+
+{% block title %}Subscription Plans - TechPulse{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        --premium-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        --card-hover-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    .subscription-hero {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 80px 0 60px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .subscription-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+        animation: float 20s infinite linear;
+    }
+
+    .subscription-hero h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .subscription-hero p {
+        font-size: 1.3rem;
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+    }
+
+    .plans-container {
+        padding: 80px 0;
+        background: linear-gradient(to bottom, #f8fafc, #ffffff);
+    }
+
+    .plans-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 40px;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .plan-card {
+        background: white;
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: var(--card-shadow);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+        border: 2px solid transparent;
+    }
+
+    .plan-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--card-hover-shadow);
+    }
+
+    .plan-card.premium {
+        background: var(--premium-gradient);
+        border-color: #f59e0b;
+        transform: scale(1.05);
+    }
+
+    .plan-card.premium:hover {
+        transform: scale(1.05) translateY(-10px);
+    }
+
+    .plan-badge {
+        position: absolute;
+        top: -10px;
+        right: 30px;
+        background: var(--success-gradient);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .plan-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .plan-name {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 10px;
+    }
+
+    .plan-price {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: #0a84ff;
+        margin-bottom: 5px;
+    }
+
+    .plan-currency {
+        font-size: 1.2rem;
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .plan-period {
+        color: #6b7280;
+        font-size: 1rem;
+    }
+
+    .plan-features {
+        list-style: none;
+        padding: 0;
+        margin: 30px 0;
+    }
+
+    .plan-features li {
+        padding: 12px 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.1rem;
+        color: #374151;
+    }
+
+    .plan-features i {
+        color: #10b981;
+        font-size: 1.2rem;
+        width: 20px;
+    }
+
+    .plan-button {
+        width: 100%;
+        padding: 16px 24px;
+        border: none;
+        border-radius: 16px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .plan-button.basic {
+        background: var(--primary-gradient);
+        color: white;
+    }
+
+    .plan-button.premium {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+    }
+
+    .plan-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .mpesa-form {
+        display: none;
+        margin-top: 20px;
+        padding: 20px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 2px solid #e5e7eb;
+    }
+
+    .mpesa-form.show {
+        display: block;
+        animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .phone-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 1rem;
+        margin-bottom: 15px;
+        transition: border-color 0.3s ease;
+    }
+
+    .phone-input:focus {
+        outline: none;
+        border-color: #0a84ff;
+        box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.1);
+    }
+
+    .phone-input::placeholder {
+        color: #9ca3af;
+        font-style: italic;
+    }
+
+    .mpesa-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        font-weight: 600;
+        color: #059669;
+    }
+
+    .pay-button {
+        width: 100%;
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .pay-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3);
+    }
+
+    .features-comparison {
+        margin-top: 60px;
+        text-align: center;
+    }
+
+    .comparison-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 40px;
+    }
+
+    .security-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #ecfdf5;
+        color: #059669;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .subscription-hero h1 {
+            font-size: 2.5rem;
+        }
+
+        .plans-grid {
+            grid-template-columns: 1fr;
+            gap: 30px;
+            padding: 0 20px;
+        }
+
+        .plan-card.premium {
+            transform: none;
+        }
+
+        .plan-card.premium:hover {
+            transform: translateY(-10px);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="subscription-hero">
+    <div class="container">
+        <h1>Choose Your Plan</h1>
+        <p>Unlock premium tech insights and stay ahead of the curve</p>
+    </div>
+</section>
+
+<!-- Plans Section -->
+<section class="plans-container">
+    <div class="container">
+        <div class="plans-grid">
+            <!-- Basic Plan -->
+            <div class="plan-card basic-plan">
+                <div class="plan-header">
+                    <h3 class="plan-name">Basic</h3>
+                    <div class="plan-price">
+                        <span class="plan-currency">KSh</span>150
+                    </div>
+                    <p class="plan-period">per month</p>
+                </div>
+                
+                <ul class="plan-features">
+                    <li><i class="fas fa-check"></i> Access to all articles</li>
+                    <li><i class="fas fa-check"></i> Weekly newsletter</li>
+                    <li><i class="fas fa-check"></i> Basic tech insights</li>
+                    <li><i class="fas fa-check"></i> Community access</li>
+                </ul>
+                
+                <button class="plan-button basic" onclick="showPaymentForm('basic', 150)">
+                    Choose Basic Plan
+                </button>
+                
+                <div class="mpesa-form" id="basic-form">
+                    <div class="mpesa-logo">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Pay with M-Pesa</span>
+                    </div>
+                    <form method="post" action="{% url 'blog:process_subscription' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="plan_type" value="Basic">
+                        <input type="tel" name="phone_number" class="phone-input" 
+                               placeholder="Enter your M-Pesa number (e.g., 254712345678)" required>
+                        <button type="submit" class="pay-button">
+                            <i class="fas fa-credit-card me-2"></i>Pay KSh 150
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="plan-card premium">
+                <div class="plan-badge">Most Popular</div>
+                <div class="plan-header">
+                    <h3 class="plan-name">Premium</h3>
+                    <div class="plan-price">
+                        <span class="plan-currency">KSh</span>250
+                    </div>
+                    <p class="plan-period">per month</p>
+                </div>
+                
+                <ul class="plan-features">
+                    <li><i class="fas fa-check"></i> Everything in Basic</li>
+                    <li><i class="fas fa-check"></i> Exclusive premium content</li>
+                    <li><i class="fas fa-check"></i> Daily tech briefings</li>
+                    <li><i class="fas fa-check"></i> Priority support</li>
+                    <li><i class="fas fa-check"></i> Early access to articles</li>
+                    <li><i class="fas fa-check"></i> Ad-free experience</li>
+                </ul>
+                
+                <button class="plan-button premium" onclick="showPaymentForm('premium', 250)">
+                    Choose Premium Plan
+                </button>
+                
+                <div class="mpesa-form" id="premium-form">
+                    <div class="mpesa-logo">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Pay with M-Pesa</span>
+                    </div>
+                    <form method="post" action="{% url 'blog:process_subscription' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="plan_type" value="Premium">
+                        <input type="tel" name="phone_number" class="phone-input" 
+                               placeholder="Enter your M-Pesa number (e.g., 254712345678)" required>
+                        <button type="submit" class="pay-button">
+                            <i class="fas fa-credit-card me-2"></i>Pay KSh 250
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Badge -->
+        <div class="text-center">
+            <div class="security-badge">
+                <i class="fas fa-shield-alt"></i>
+                <span>Secure payments powered by M-Pesa</span>
+            </div>
+        </div>
+
+        <!-- Features Comparison -->
+        <div class="features-comparison">
+            <h2 class="comparison-title">Why Choose TechPulse Premium?</h2>
+            <div class="row">
+                <div class="col-md-4 text-center mb-4">
+                    <i class="fas fa-rocket fa-3x text-primary mb-3"></i>
+                    <h5>Exclusive Content</h5>
+                    <p class="text-muted">Get access to premium articles and in-depth analysis from industry experts.</p>
+                </div>
+                <div class="col-md-4 text-center mb-4">
+                    <i class="fas fa-clock fa-3x text-success mb-3"></i>
+                    <h5>Early Access</h5>
+                    <p class="text-muted">Be the first to read breaking tech news and trending stories.</p>
+                </div>
+                <div class="col-md-4 text-center mb-4">
+                    <i class="fas fa-ad fa-3x text-warning mb-3"></i>
+                    <h5>Ad-Free Experience</h5>
+                    <p class="text-muted">Enjoy uninterrupted reading with our completely ad-free premium experience.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function showPaymentForm(planType, amount) {
+    // Hide all forms first
+    document.querySelectorAll('.mpesa-form').forEach(form => {
+        form.classList.remove('show');
+    });
+    
+    // Show the selected form
+    const formId = planType + '-form';
+    const form = document.getElementById(formId);
+    form.classList.add('show');
+    
+    // Scroll to form
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// Phone number formatting and validation
+document.querySelectorAll('.phone-input').forEach(input => {
+    input.addEventListener('input', function() {
+        let value = this.value.replace(/\D/g, ''); // Remove non-digits
+        
+        // Auto-add 254 prefix if not present
+        if (value.length > 0) {
+            if (value.startsWith('0')) {
+                value = '254' + value.substring(1);
+            } else if (!value.startsWith('254') && (value.startsWith('7') || value.startsWith('1'))) {
+                value = '254' + value;
+            }
+        }
+        
+        this.value = value;
+    });
+});
+
+// Form submission with loading state
+document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        const button = this.querySelector('.pay-button');
+        const originalText = button.innerHTML;
+        const phoneInput = this.querySelector('.phone-input');
+        
+        // Basic validation
+        if (phoneInput.value.length < 12) {
+            e.preventDefault();
+            alert('Please enter a valid phone number (format: 254XXXXXXXXX)');
+            return false;
+        }
+        
+        // Show loading state
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+        
+        // Add a timeout to check payment status
+        if (window.paymentCheckInterval) {
+            clearInterval(window.paymentCheckInterval);
+        }
+        
+        // Check payment status every 5 seconds
+        window.paymentCheckInterval = setInterval(() => {
+            fetch('/api/mpesa/status/')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Payment status:', data);
+                    if (data.status === 'success' && data.data.ResultCode === '0') {
+                        clearInterval(window.paymentCheckInterval);
+                        alert('Payment successful! Your subscription has been activated.');
+                        window.location.reload();
+                    }
+                })
+                .catch(error => console.error('Error checking payment status:', error));
+        }, 5000);
+    });
+});
+</script>
+{% endblock %}

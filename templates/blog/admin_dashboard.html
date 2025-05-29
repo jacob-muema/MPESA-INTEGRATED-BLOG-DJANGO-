@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Admin Dashboard - TechPulse{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold">Admin Dashboard</h2>
+                <a href="/admin/" class="btn btn-primary">
+                    <i class="fas fa-cog me-2"></i>Django Admin
+                </a>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">{{ stats.total_posts }}</h4>
+                                    <p class="card-text">Total Posts</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-newspaper fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">{{ stats.published_posts }}</h4>
+                                    <p class="card-text">Published</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-check-circle fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">{{ stats.draft_posts }}</h4>
+                                    <p class="card-text">Drafts</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-edit fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">{{ stats.total_comments }}</h4>
+                                    <p class="card-text">Comments</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-comments fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Recent Posts -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Recent Posts</h5>
+                        </div>
+                        <div class="card-body">
+                            {% for post in recent_posts %}
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h6 class="mb-1">
+                                        <a href="{{ post.get_absolute_url }}" class="text-decoration-none">{{ post.title|truncatewords:6 }}</a>
+                                    </h6>
+                                    <small class="text-muted">by {{ post.author.username }} • {{ post.created_at|naturaltime }}</small>
+                                </div>
+                                <div>
+                                    <span class="badge bg-{{ post.status|yesno:'success,warning' }}">{{ post.get_status_display }}</span>
+                                    <a href="/admin/blog/post/{{ post.id }}/change/" class="btn btn-sm btn-outline-primary ms-2">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-muted">No posts yet.</p>
+                            {% endfor %}
+                        </div>
+                        <div class="card-footer">
+                            <a href="/admin/blog/post/" class="btn btn-primary btn-sm">Manage All Posts</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Comments -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Recent Comments</h5>
+                        </div>
+                        <div class="card-body">
+                            {% for comment in recent_comments %}
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">{{ comment.author.username }}</h6>
+                                    <p class="mb-1 small">{{ comment.content|truncatewords:10 }}</p>
+                                    <small class="text-muted">on {{ comment.post.title|truncatewords:4 }} • {{ comment.created_at|naturaltime }}</small>
+                                </div>
+                                <div>
+                                    <span class="badge bg-{{ comment.is_approved|yesno:'success,warning' }}">
+                                        {{ comment.is_approved|yesno:'Approved,Pending' }}
+                                    </span>
+                                    <a href="/admin/blog/comment/{{ comment.id }}/change/" class="btn btn-sm btn-outline-primary ms-2">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-muted">No comments yet.</p>
+                            {% endfor %}
+                        </div>
+                        <div class="card-footer">
+                            <a href="/admin/blog/comment/" class="btn btn-primary btn-sm">Manage All Comments</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-2">
+                                    <a href="/admin/blog/post/add/" class="btn btn-outline-primary w-100">
+                                        <i class="fas fa-plus me-2"></i>New Post
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <a href="/admin/blog/category/" class="btn btn-outline-success w-100">
+                                        <i class="fas fa-folder me-2"></i>Categories
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <a href="/admin/blog/tag/" class="btn btn-outline-info w-100">
+                                        <i class="fas fa-tags me-2"></i>Tags
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <a href="/admin/auth/user/" class="btn btn-outline-warning w-100">
+                                        <i class="fas fa-users me-2"></i>Users
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

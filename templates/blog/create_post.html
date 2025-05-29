@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Create Post - ModernBlog{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-pen me-2"></i>Create New Post</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-generate slug from title
+    const titleField = document.getElementById('id_title');
+    if (titleField) {
+        titleField.addEventListener('input', function() {
+            // This is just for preview - actual slug generation happens in the model
+            console.log('Title changed:', this.value);
+        });
+    }
+    
+    // Preview featured image
+    const imageField = document.getElementById('id_featured_image');
+    if (imageField) {
+        imageField.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    let preview = document.getElementById('image-preview');
+                    if (!preview) {
+                        preview = document.createElement('img');
+                        preview.id = 'image-preview';
+                        preview.className = 'img-fluid mt-2 rounded';
+                        preview.style.maxHeight = '200px';
+                        imageField.parentNode.appendChild(preview);
+                    }
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

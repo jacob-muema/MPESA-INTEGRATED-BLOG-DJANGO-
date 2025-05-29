@@ -1,0 +1,512 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Join TechPulse - Register{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .register-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+    
+    .register-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        max-width: 900px;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 600px;
+    }
+    
+    .register-left {
+        background: linear-gradient(135deg, #0a84ff 0%, #0070e0 100%);
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .register-left::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+        animation: float 20s infinite linear;
+    }
+    
+    @keyframes float {
+        0% { transform: translateY(0) rotate(0deg); }
+        100% { transform: translateY(-100px) rotate(360deg); }
+    }
+    
+    .register-right {
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .brand-logo {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .brand-tagline {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .feature-list {
+        list-style: none;
+        padding: 0;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .feature-list li {
+        padding: 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .feature-list i {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1.1rem;
+    }
+    
+    .form-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #1f2937;
+    }
+    
+    .form-subtitle {
+        color: #6b7280;
+        margin-bottom: 2rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+    
+    .form-control {
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+        width: 100%;
+    }
+    
+    .form-control:focus {
+        border-color: #0a84ff;
+        box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.1);
+        background: white;
+        outline: none;
+    }
+    
+    .form-control::placeholder {
+        color: #9ca3af;
+        font-style: italic;
+        opacity: 0.8;
+    }
+    
+    /* Password validation indicators */
+    .password-field {
+        position: relative;
+    }
+    
+    .password-indicator {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.2rem;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .password-indicator.show {
+        opacity: 1;
+    }
+    
+    .password-indicator.valid {
+        color: #10b981;
+    }
+    
+    .password-indicator.invalid {
+        color: #ef4444;
+    }
+    
+    .password-requirements {
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: #6b7280;
+    }
+    
+    .requirement {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.25rem;
+        transition: color 0.3s ease;
+    }
+    
+    .requirement.valid {
+        color: #10b981;
+    }
+    
+    .requirement.invalid {
+        color: #ef4444;
+    }
+    
+    .requirement i {
+        font-size: 0.8rem;
+    }
+    
+    .btn-register {
+        background: linear-gradient(135deg, #0a84ff 0%, #0070e0 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 0.875rem 2rem;
+        font-weight: 600;
+        font-size: 1rem;
+        color: white;
+        width: 100%;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-register:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(10, 132, 255, 0.3);
+    }
+    
+    .btn-register:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .login-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: #6b7280;
+    }
+    
+    .login-link a {
+        color: #0a84ff;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+        .register-card {
+            grid-template-columns: 1fr;
+            margin: 1rem;
+        }
+        
+        .register-left {
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .register-right {
+            padding: 2rem;
+        }
+        
+        .brand-logo {
+            font-size: 2rem;
+        }
+    }
+    
+    .loading-spinner {
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+        margin-right: 0.5rem;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <div class="register-card">
+        <div class="register-left">
+            <div class="brand-logo">TechPulse</div>
+            <div class="brand-tagline">Join the future of technology news</div>
+            <ul class="feature-list">
+                <li><i class="fas fa-rocket"></i> Latest tech news and insights</li>
+                <li><i class="fas fa-users"></i> Connect with tech enthusiasts</li>
+                <li><i class="fas fa-star"></i> Exclusive content and analysis</li>
+                <li><i class="fas fa-bell"></i> Personalized news feed</li>
+            </ul>
+        </div>
+        
+        <div class="register-right">
+            <h2 class="form-title">Create Account</h2>
+            <p class="form-subtitle">Start your tech journey with us today</p>
+            
+            <form method="post" id="register-form">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                            <input type="text" name="first_name" class="form-control" id="{{ form.first_name.id_for_label }}" 
+                                   placeholder="Enter your first name" value="{{ form.first_name.value|default:'' }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                            <input type="text" name="last_name" class="form-control" id="{{ form.last_name.id_for_label }}" 
+                                   placeholder="Enter your last name" value="{{ form.last_name.value|default:'' }}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" id="{{ form.username.id_for_label }}" 
+                           placeholder="Choose a unique username" value="{{ form.username.value|default:'' }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
+                    <input type="email" name="email" class="form-control" id="{{ form.email.id_for_label }}" 
+                           placeholder="Enter your email address" value="{{ form.email.value|default:'' }}" required>
+                </div>
+                
+                <div class="form-group password-field">
+                    <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+                    <input type="password" name="password1" class="form-control" id="{{ form.password1.id_for_label }}" 
+                           placeholder="Create a strong password" required>
+                    <div class="password-indicator" id="password1-indicator">
+                        <i class="fas fa-times"></i>
+                    </div>
+                    <div class="password-requirements" id="password-requirements">
+                        <div class="requirement" id="req-length">
+                            <i class="fas fa-times"></i>
+                            <span>At least 8 characters</span>
+                        </div>
+                        <div class="requirement" id="req-number">
+                            <i class="fas fa-times"></i>
+                            <span>Contains a number</span>
+                        </div>
+                        <div class="requirement" id="req-letter">
+                            <i class="fas fa-times"></i>
+                            <span>Contains a letter</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group password-field">
+                    <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
+                    <input type="password" name="password2" class="form-control" id="{{ form.password2.id_for_label }}" 
+                           placeholder="Confirm your password" required>
+                    <div class="password-indicator" id="password2-indicator">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+                
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <button type="submit" class="btn-register" id="register-button" disabled>
+                    <span class="loading-spinner"></span>
+                    <span class="button-text">Create Account</span>
+                </button>
+            </form>
+            
+            <div class="login-link">
+                Already have an account? <a href="{% url 'accounts:login' %}">Sign in here</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('register-form');
+    const button = document.getElementById('register-button');
+    const spinner = button.querySelector('.loading-spinner');
+    const buttonText = button.querySelector('.button-text');
+    
+    const password1 = document.getElementById('{{ form.password1.id_for_label }}');
+    const password2 = document.getElementById('{{ form.password2.id_for_label }}');
+    const password1Indicator = document.getElementById('password1-indicator');
+    const password2Indicator = document.getElementById('password2-indicator');
+    
+    // Password requirements elements
+    const reqLength = document.getElementById('req-length');
+    const reqNumber = document.getElementById('req-number');
+    const reqLetter = document.getElementById('req-letter');
+    
+    // Validation functions
+    function validatePassword(password) {
+        const hasLength = password.length >= 8;
+        const hasNumber = /\d/.test(password);
+        const hasLetter = /[a-zA-Z]/.test(password);
+        
+        return {
+            hasLength,
+            hasNumber,
+            hasLetter,
+            isValid: hasLength && hasNumber && hasLetter
+        };
+    }
+    
+    function updateRequirement(element, isValid) {
+        const icon = element.querySelector('i');
+        if (isValid) {
+            element.classList.add('valid');
+            element.classList.remove('invalid');
+            icon.className = 'fas fa-check';
+        } else {
+            element.classList.add('invalid');
+            element.classList.remove('valid');
+            icon.className = 'fas fa-times';
+        }
+    }
+    
+    function updatePasswordIndicator(indicator, isValid) {
+        const icon = indicator.querySelector('i');
+        indicator.classList.add('show');
+        
+        if (isValid) {
+            indicator.classList.add('valid');
+            indicator.classList.remove('invalid');
+            icon.className = 'fas fa-check';
+        } else {
+            indicator.classList.add('invalid');
+            indicator.classList.remove('valid');
+            icon.className = 'fas fa-times';
+        }
+    }
+    
+    function checkFormValidity() {
+        const password1Value = password1.value;
+        const password2Value = password2.value;
+        const validation = validatePassword(password1Value);
+        
+        const isValid = validation.isValid && 
+                       password1Value === password2Value && 
+                       password1Value.length > 0;
+        
+        button.disabled = !isValid;
+    }
+    
+    // Password 1 validation
+    password1.addEventListener('input', function() {
+        const password = this.value;
+        const validation = validatePassword(password);
+        
+        // Update requirements
+        updateRequirement(reqLength, validation.hasLength);
+        updateRequirement(reqNumber, validation.hasNumber);
+        updateRequirement(reqLetter, validation.hasLetter);
+        
+        // Update indicator
+        if (password.length > 0) {
+            updatePasswordIndicator(password1Indicator, validation.isValid);
+        } else {
+            password1Indicator.classList.remove('show');
+        }
+        
+        // Check password match if password2 has value
+        if (password2.value.length > 0) {
+            const passwordsMatch = password === password2.value;
+            updatePasswordIndicator(password2Indicator, passwordsMatch);
+        }
+        
+        checkFormValidity();
+    });
+    
+    // Password 2 validation
+    password2.addEventListener('input', function() {
+        const password = this.value;
+        const passwordsMatch = password === password1.value;
+        
+        if (password.length > 0) {
+            updatePasswordIndicator(password2Indicator, passwordsMatch);
+        } else {
+            password2Indicator.classList.remove('show');
+        }
+        
+        checkFormValidity();
+    });
+    
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        button.disabled = true;
+        spinner.style.display = 'inline-block';
+        buttonText.textContent = 'Creating Account...';
+    });
+    
+    // Add floating animation to form fields
+    const formControls = document.querySelectorAll('.form-control');
+    formControls.forEach(control => {
+        control.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'translateY(-2px)';
+        });
+        
+        control.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
+{% endblock %}

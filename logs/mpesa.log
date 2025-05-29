@@ -1,0 +1,30 @@
+INFO 2025-05-29 08:27:13,507 mpesa MpesaClient initialized in sandbox environment
+INFO 2025-05-29 08:27:13,507 views Initiating STK push for user jacob2, plan: Basic, phone: 254740491425
+INFO 2025-05-29 08:27:14,486 mpesa Access token obtained successfully
+INFO 2025-05-29 08:27:14,498 mpesa Initiating STK push for 254740491425 with amount 150
+INFO 2025-05-29 08:27:15,399 mpesa STK push initiated successfully: ws_CO_29052025112713787740491425
+INFO 2025-05-29 08:27:15,403 views STK push initiated successfully for jacob2: ws_CO_29052025112713787740491425
+INFO 2025-05-29 08:56:10,336 mpesa MpesaClient initialized in sandbox environment
+INFO 2025-05-29 08:56:10,336 views Initiating STK push for user jacob47, plan: Basic, phone: 254740491425
+INFO 2025-05-29 08:56:11,707 mpesa Access token obtained successfully
+INFO 2025-05-29 08:56:11,712 mpesa Initiating STK push for 254740491425 with amount 150
+INFO 2025-05-29 08:56:12,631 mpesa STK push initiated successfully: ws_CO_29052025115815281740491425
+INFO 2025-05-29 08:56:12,639 views STK push initiated successfully for jacob47: ws_CO_29052025115815281740491425
+INFO 2025-05-29 09:16:09,832 mpesa MpesaClient initialized in sandbox environment
+INFO 2025-05-29 09:16:09,833 views Initiating STK push for user TL, plan: Premium, phone: 254740491425
+INFO 2025-05-29 09:16:10,834 mpesa Access token obtained successfully
+INFO 2025-05-29 09:16:10,837 mpesa Initiating STK push for 254740491425 with amount 250
+INFO 2025-05-29 09:16:11,950 mpesa STK push initiated successfully: ws_CO_29052025121610219740491425
+INFO 2025-05-29 09:16:11,985 views STK push initiated successfully for TL: ws_CO_29052025121610219740491425
+INFO 2025-05-29 09:16:22,615 mpesa MpesaClient initialized in sandbox environment
+INFO 2025-05-29 09:16:22,617 views Initiating STK push for user TL, plan: Basic, phone: 254740491425
+INFO 2025-05-29 09:16:23,258 mpesa Access token obtained successfully
+INFO 2025-05-29 09:16:23,265 mpesa Initiating STK push for 254740491425 with amount 150
+ERROR 2025-05-29 09:16:24,844 mpesa STK push failed: {'requestId': '3080-45a6-a06c-fffc5ef13d9c118455', 'errorCode': '500.001.1001', 'errorMessage': 'Unable to lock subscriber, a transaction is already in process for the current subscriber'}
+ERROR 2025-05-29 09:16:24,850 views STK push failed for TL: {'requestId': '3080-45a6-a06c-fffc5ef13d9c118455', 'errorCode': '500.001.1001', 'errorMessage': 'Unable to lock subscriber, a transaction is already in process for the current subscriber'}
+INFO 2025-05-29 09:16:42,353 mpesa MpesaClient initialized in sandbox environment
+INFO 2025-05-29 09:16:42,353 views Initiating STK push for user TL, plan: Basic, phone: 254740491425
+INFO 2025-05-29 09:16:43,258 mpesa Access token obtained successfully
+INFO 2025-05-29 09:16:43,260 mpesa Initiating STK push for 254740491425 with amount 150
+INFO 2025-05-29 09:16:44,400 mpesa STK push initiated successfully: ws_CO_29052025121642684740491425
+INFO 2025-05-29 09:16:44,404 views STK push initiated successfully for TL: ws_CO_29052025121642684740491425

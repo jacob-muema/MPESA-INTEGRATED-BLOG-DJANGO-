@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}{{ category.name }} - TechPulse{% endblock %}
+
+{% block extra_css %}
+<style>
+    .category-hero {
+        background: linear-gradient(135deg, {{ category.color }}22 0%, {{ category.color }}11 100%);
+        padding: 60px 0;
+        margin-bottom: 40px;
+    }
+    
+    .category-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: {{ category.color }};
+        margin-bottom: 1rem;
+    }
+    
+    .category-description {
+        font-size: 1.2rem;
+        color: #6b7280;
+        margin-bottom: 2rem;
+    }
+    
+    .category-stats {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+    }
+    
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6b7280;
+    }
+    
+    .articles-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 30px;
+        margin-bottom: 3rem;
+    }
+    
+    .article-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 1px solid #e5e7eb;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .article-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .article-image-container {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+    
+    .article-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .article-card:hover .article-image {
+        transform: scale(1.05);
+    }
+    
+    .article-image-placeholder {
+        width: 100%;
+        height: 100%;
+        background: #f3f4f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9ca3af;
+    }
+    
+    .category-badge {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        background: {{ category.color }};
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        z-index: 2;
+    }
+    
+    .article-content {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .article-title {
+        margin-bottom: 1rem;
+    }
+    
+    .article-title a {
+        color: #1f2937;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.125rem;
+        line-height: 1.4;
+        transition: color 0.2s ease;
+    }
+    
+    .article-title a:hover {
+        color: {{ category.color }};
+    }
+    
+    .article-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+    
+    .author-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .author-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .author-avatar-placeholder {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: {{ category.color }};
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+    
+    .author-name {
+        font-weight: 500;
+        color: #1f2937;
+        font-size: 0.875rem;
+    }
+    
+    .article-date {
+        color: #9ca3af;
+        font-size: 0.875rem;
+    }
+    
+    .article-excerpt {
+        color: #6b7280;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+        flex: 1;
+    }
+    
+    .article-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: auto;
+    }
+    
+    .read-time {
+        color: #9ca3af;
+        font-size: 0.875rem;
+    }
+    
+    .read-more {
+        color: {{ category.color }};
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: color 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    .read-more:hover {
+        color: #1f2937;
+    }
+    
+    @media (max-width: 768px) {
+        .category-title {
+            font-size: 2rem;
+        }
+        
+        .articles-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .category-stats {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Category Hero -->
+<section class="category-hero">
+    <div class="container">
+        <div class="text-center">
+            <h1 class="category-title">{{ category.name }}</h1>
+            {% if category.description %}
+            <p class="category-description">{{ category.description }}</p>
+            {% endif %}
+            <div class="category-stats justify-content-center">
+                <div class="stat-item">
+                    <i class="fas fa-newspaper"></i>
+                    <span>{{ page_obj.paginator.count }} Articles</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-eye"></i>
+                    <span>Latest Updates</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Articles Grid -->
+<section class="container">
+    {% if page_obj %}
+    <div class="articles-grid">
+        {% for post in page_obj %}
+        <article class="article-card">
+            <div class="article-image-container">
+                <span class="category-badge">{{ category.name }}</span>
+                {% if post.featured_image_url %}
+                <img src="{{ post.featured_image_url }}" alt="{{ post.title }}" class="article-image">
+                {% else %}
+                <div class="article-image-placeholder">
+                    <i class="fas fa-image fa-2x"></i>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="article-content">
+                <h3 class="article-title">
+                    <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                </h3>
+                
+                <div class="article-meta">
+                    <div class="author-info">
+                        {% if post.author.profile.avatar_url %}
+                        <img src="{{ post.author.profile.avatar_url }}" alt="{{ post.author.username }}" class="author-avatar">
+                        {% else %}
+                        <div class="author-avatar-placeholder">
+                            {{ post.author.first_name.0|default:post.author.username.0|upper }}
+                        </div>
+                        {% endif %}
+                        <span class="author-name">{{ post.author.get_full_name|default:post.author.username }}</span>
+                    </div>
+                    <div class="article-date">{{ post.created_at|date:"M d, Y" }}</div>
+                </div>
+                
+                <p class="article-excerpt">{{ post.excerpt|truncatewords:15 }}</p>
+                
+                <div class="article-footer">
+                    <span class="read-time">{{ post.read_time }} min read</span>
+                    <a href="{{ post.get_absolute_url }}" class="read-more">
+                        Read Article <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Articles pagination" class="mt-5">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active">
+                <span class="page-link">{{ num }}</span>
+            </li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
+        <h4 class="text-muted">No articles found in {{ category.name }}</h4>
+        <p class="text-muted">Check back later for the latest {{ category.name|lower }} news and insights.</p>
+        <a href="{% url 'blog:home' %}" class="btn btn-primary">Browse All Articles</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,590 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}TechPulse - Latest Technology News & Insights{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #0a84ff;
+        --primary-hover: #0070e0;
+        --secondary-color: #f43f5e;
+        --text-color: #111827;
+        --text-light: #4b5563;
+        --text-lighter: #6b7280;
+        --background: #ffffff;
+        --background-alt: #f9fafb;
+        --background-card: #ffffff;
+        --border-color: #e5e7eb;
+        --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --transition: all 0.3s ease;
+        --radius: 8px;
+    }
+
+    .dark-mode {
+        --primary-color: #3b82f6;
+        --text-color: #f9fafb;
+        --text-light: #d1d5db;
+        --text-lighter: #9ca3af;
+        --background: #111827;
+        --background-alt: #1f2937;
+        --background-card: #1e293b;
+        --border-color: #374151;
+    }
+
+    /* Breaking News Ticker */
+    .breaking-news {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 10px 0;
+        overflow: hidden;
+    }
+
+    .ticker-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .ticker-label {
+        background-color: var(--secondary-color);
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        margin-right: 15px;
+        white-space: nowrap;
+    }
+
+    .ticker-wrapper {
+        overflow: hidden;
+        flex: 1;
+    }
+
+    .ticker {
+        display: flex;
+        animation: ticker 30s linear infinite;
+        white-space: nowrap;
+    }
+
+    .ticker-item {
+        margin-right: 40px;
+        font-weight: 500;
+    }
+
+    @keyframes ticker {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-100%); }
+    }
+
+    /* Hero Section */
+    .hero {
+        background-color: var(--background-alt);
+        padding: 60px 0;
+    }
+
+    .hero-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 30px;
+        align-items: center;
+    }
+
+    .hero-content h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1.2;
+        margin-bottom: 20px;
+        letter-spacing: -1px;
+        color: var(--text-color);
+    }
+
+    .hero-content p {
+        font-size: 1.2rem;
+        color: var(--text-light);
+        margin-bottom: 30px;
+    }
+
+    .hero-image {
+        position: relative;
+        height: 400px;
+        border-radius: var(--radius);
+        overflow: hidden;
+    }
+
+    .hero-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .hero-badge {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background-color: var(--secondary-color);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        z-index: 1;
+    }
+
+    /* Section Headers */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        border-bottom: 2px solid var(--border-color);
+        padding-bottom: 15px;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+
+    .view-all {
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    /* Filter Controls */
+    .filter-controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+    }
+
+    .filter-btn {
+        background: none;
+        border: 1px solid var(--border-color);
+        padding: 8px 15px;
+        border-radius: 20px;
+        color: var(--text-light);
+        font-size: 0.9rem;
+        transition: var(--transition);
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    /* Articles Grid */
+    .articles-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 30px;
+        margin-bottom: 3rem;
+    }
+
+    .article-card {
+        background: var(--background-card);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        transition: var(--transition);
+        border: 1px solid var(--border-color);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .article-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .article-image-container {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .article-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .article-card:hover .article-image {
+        transform: scale(1.05);
+    }
+
+    .article-image-placeholder {
+        width: 100%;
+        height: 100%;
+        background: var(--background-alt);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-lighter);
+    }
+
+    .category-badge {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        z-index: 2;
+    }
+
+    .article-content {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .article-title {
+        margin-bottom: 1rem;
+    }
+
+    .article-title a {
+        color: var(--text-color);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.125rem;
+        line-height: 1.4;
+        transition: color 0.2s ease;
+    }
+
+    .article-title a:hover {
+        color: var(--primary-color);
+    }
+
+    .article-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+
+    .author-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .author-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .author-avatar-placeholder {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+
+    .author-name {
+        font-weight: 500;
+        color: var(--text-color);
+        font-size: 0.875rem;
+    }
+
+    .article-date {
+        color: var(--text-lighter);
+        font-size: 0.875rem;
+    }
+
+    .article-excerpt {
+        color: var(--text-light);
+        margin-bottom: 1rem;
+        line-height: 1.6;
+        flex: 1;
+    }
+
+    .article-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: auto;
+    }
+
+    .read-time {
+        color: var(--text-lighter);
+        font-size: 0.875rem;
+    }
+
+    .read-more {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: color 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .read-more:hover {
+        color: var(--primary-hover);
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .hero-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .hero-image {
+            height: 300px;
+            order: -1;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-content h1 {
+            font-size: 2.5rem;
+        }
+        
+        .articles-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .filter-controls {
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+        
+        .filter-btn {
+            white-space: nowrap;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .hero-content h1 {
+            font-size: 1.75rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Breaking News Ticker -->
+{% if breaking_news %}
+<div class="breaking-news">
+    <div class="container">
+        <div class="ticker-container">
+            <span class="ticker-label">BREAKING</span>
+            <div class="ticker-wrapper">
+                <div class="ticker">
+                    {% for news in breaking_news %}
+                    <span class="ticker-item">
+                        <a href="{{ news.get_absolute_url }}" style="color: white;">{{ news.title }}</a>
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="container mt-4">
+    <!-- Hero Section with Featured Article -->
+    {% if featured_post %}
+    <section class="hero">
+        <div class="hero-grid">
+            <div class="hero-content">
+                <h1>{{ featured_post.title }}</h1>
+                <p>{{ featured_post.excerpt }}</p>
+                <a href="{{ featured_post.get_absolute_url }}" class="btn btn-primary btn-lg">Read Full Story</a>
+            </div>
+            <div class="hero-image">
+                <div class="hero-badge">Featured</div>
+                {% if featured_post.featured_image_url %}
+                <img src="{{ featured_post.featured_image_url }}" alt="{{ featured_post.title }}">
+                {% else %}
+                <div class="article-image-placeholder">
+                    <i class="fas fa-image fa-3x"></i>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Latest Articles Section -->
+    <section style="padding: 80px 0;">
+        <div class="section-header">
+            <h2 class="section-title">Latest Articles</h2>
+            <a href="#" class="view-all">View All <i class="fas fa-arrow-right ms-1"></i></a>
+        </div>
+        
+        <!-- Category Filter -->
+        <div class="filter-controls">
+            <button class="filter-btn active" data-category="all">All</button>
+            <button class="filter-btn" data-category="tech">Tech</button>
+            <button class="filter-btn" data-category="ai">AI</button>
+            <button class="filter-btn" data-category="startups">Startups</button>
+            <button class="filter-btn" data-category="gadgets">Gadgets</button>
+            <button class="filter-btn" data-category="software">Software</button>
+        </div>
+
+        <!-- Articles Grid -->
+        <div class="articles-grid">
+            {% for post in page_obj %}
+            <article class="article-card" data-category="{{ post.category.slug|default:'general' }}">
+                <div class="article-image-container">
+                    {% if post.category %}
+                    <span class="category-badge" style="background-color: {{ post.category.color }}">{{ post.category.name }}</span>
+                    {% endif %}
+                    {% if post.featured_image_url %}
+                    <img src="{{ post.featured_image_url }}" alt="{{ post.title }}" class="article-image">
+                    {% else %}
+                    <div class="article-image-placeholder">
+                        <i class="fas fa-image fa-2x"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="article-content">
+                    <h3 class="article-title">
+                        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                    </h3>
+                    
+                    <div class="article-meta">
+                        <div class="author-info">
+                            {% if post.author.profile.avatar_url %}
+                            <img src="{{ post.author.profile.avatar_url }}" alt="{{ post.author.username }}" class="author-avatar">
+                            {% else %}
+                            <div class="author-avatar-placeholder">
+                                {{ post.author.first_name.0|default:post.author.username.0|upper }}
+                            </div>
+                            {% endif %}
+                            <span class="author-name">{{ post.author.get_full_name|default:post.author.username }}</span>
+                        </div>
+                        <div class="article-date">{{ post.created_at|date:"M d, Y" }}</div>
+                    </div>
+                    
+                    <p class="article-excerpt">{{ post.excerpt|truncatewords:15 }}</p>
+                    
+                    <div class="article-footer">
+                        <span class="read-time">{{ post.read_time }} min read</span>
+                        <a href="{{ post.get_absolute_url }}" class="read-more">
+                            Read Article <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {% empty %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No articles found</h4>
+                    <p class="text-muted">Check back later for the latest tech news and insights.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <nav aria-label="Articles pagination" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Category filter functionality
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const articles = document.querySelectorAll('.article-card');
+    
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const category = this.dataset.category;
+            
+            // Update active button
+            filterBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Filter articles
+            articles.forEach(article => {
+                if (category === 'all' || article.dataset.category === category) {
+                    article.style.display = 'block';
+                    article.style.animation = 'fadeInUp 0.5s ease';
+                } else {
+                    article.style.display = 'none';
+                }
+            });
+        });
+    });
+    
+    // Breaking news ticker - clone items for continuous scrolling
+    const ticker = document.querySelector('.ticker');
+    if (ticker) {
+        const tickerItems = ticker.querySelectorAll('.ticker-item');
+        tickerItems.forEach(item => {
+            const clone = item.cloneNode(true);
+            ticker.appendChild(clone);
+        });
+    }
+});
+</script>
+{% endblock %}

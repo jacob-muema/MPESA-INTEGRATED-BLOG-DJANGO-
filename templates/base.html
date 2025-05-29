@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TechPulse - Latest Technology News & Insights{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+    
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background, #ffffff);
+            color: var(--text-color, #111827);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color, #0a84ff);
+            border-color: var(--primary-color, #0a84ff);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-hover, #0070e0);
+            border-color: var(--primary-hover, #0070e0);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    {% if user.is_authenticated %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary fs-3" href="{% url 'blog:home' %}">
+                TechPulse
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium" href="{% url 'blog:home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium" href="{% url 'blog:category_posts' 'tech' %}">Tech News</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium" href="{% url 'blog:category_posts' 'ai' %}">AI</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium" href="{% url 'blog:category_posts' 'startups' %}">Startups</a>
+                    </li>
+                </ul>
+                
+                <!-- Search Form -->
+                <form class="d-flex me-3" method="GET" action="{% url 'blog:home' %}">
+                    <div class="search-container">
+                        <input class="form-control search-input" type="search" name="search" placeholder="Search articles..." 
+                               value="{{ request.GET.search }}">
+                        <button class="search-btn" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+                
+                <ul class="navbar-nav align-items-center">
+                    {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/">
+                            <i class="fas fa-cog me-1"></i>Admin
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            {% if user.profile.avatar_url %}
+                            <img src="{{ user.profile.avatar_url }}" class="rounded-circle me-2" width="32" height="32" alt="{{ user.username }}">
+                            {% else %}
+                            <div class="bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center text-white" style="width: 32px; height: 32px; font-size: 14px;">
+                                {{ user.first_name.0|default:user.username.0|upper }}
+                            </div>
+                            {% endif %}
+                            {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'blog:profile' %}">
+                                <i class="fas fa-user-edit me-2"></i>Profile
+                            </a></li>
+                            <li><a class="dropdown-item" href="{% url 'blog:user_posts' %}">
+                                <i class="fas fa-newspaper me-2"></i>My Posts
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container {% if user.is_authenticated %}mt-5 pt-3{% else %}mt-3{% endif %}">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="{% if user.is_authenticated %}main-content{% endif %}">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer (only show when authenticated) -->
+    {% if user.is_authenticated %}
+    <footer class="bg-dark text-light py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5 class="fw-bold mb-3 text-primary">TechPulse</h5>
+                    <p class="text-muted">Your premier destination for the latest technology news, insights, and analysis. Stay ahead of the curve with TechPulse.</p>
+                    <div class="social-links">
+                        <a href="#" class="text-muted me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-muted me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-muted me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-youtube fa-lg"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <h6 class="fw-bold mb-3">Categories</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted text-decoration-none">Tech News</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">AI</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Startups</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Gadgets</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h6 class="fw-bold mb-3">Company</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted text-decoration-none">About</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Contact</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Careers</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Privacy</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="fw-bold mb-3">Newsletter</h6>
+                    <p class="text-muted small">Subscribe to get the latest tech news delivered to your inbox.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Enter your email">
+                        <a href="{% url 'blog:subscription_plans' %}" class="btn btn-primary">Subscribe</a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="text-muted mb-0">&copy; 2024 TechPulse. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted mb-0">Built with Django & Bootstrap</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    {% endif %}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% load static %}
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
+    
+    <style>
+        .main-content {
+            padding-top: 80px;
+            min-height: calc(100vh - 200px);
+        }
+        
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            border: 1px solid #e5e7eb;
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            padding-right: 2.5rem;
+            width: 250px;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-color, #0a84ff);
+            box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.1);
+            outline: none;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 8px;
+            background: none;
+            border: none;
+            color: #6b7280;
+            padding: 0.25rem;
+        }
+    </style>
+</body>
+</html>
