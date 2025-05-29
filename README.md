@@ -571,6 +571,7 @@ def home_view(request):
 - **LinkedIn**: [Connect for professional networking](https://www.linkedin.com/in/jacob-muema-256310270/overlay/about-this-profile/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3BZfiKPPcJSySk%2FDSVTdAkQg%3D%3D)
 - **Portfolio**: [View other projects and achievements](https://kavengijm-featuringmomalways.netlify.app/)
 
+
 ---
 
 ## 📄 License
