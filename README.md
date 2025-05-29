@@ -558,7 +558,7 @@ def home_view(request):
 ## 📞 Support & Contact
 
 ### Technical Support
-- **GitHub Issues**: [Report bugs and request features](https://github.com/yourusername/techpulse-blog/issues)
+
 - **Email**: [jacobmuema02@gmail.com](mailto:jacobmuema02@gmail.com)
 - **Documentation**: Comprehensive code comments and this README
 
@@ -568,8 +568,8 @@ def home_view(request):
 - **Community Forum**: Safaricom Developer Community
 
 ### Professional Inquiries
-- **LinkedIn**: [Connect for professional networking](https://linkedin.com/in/jacob-muema)
-- **Portfolio**: [View other projects and achievements](https://jacobmuema.dev)
+- **LinkedIn**: [Connect for professional networking](https://www.linkedin.com/in/jacob-muema-256310270/overlay/about-this-profile/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3BZfiKPPcJSySk%2FDSVTdAkQg%3D%3D)
+- **Portfolio**: [View other projects and achievements](https://kavengijm-featuringmomalways.netlify.app/)
 
 ---
 
