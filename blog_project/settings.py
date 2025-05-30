@@ -14,10 +14,7 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 # In settings.py
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://mpesa-integrated-blog-django-production.up.railway.app",
-    "http://localhost:3000",
-]
+
 
 ALLOWED_HOSTS = ['mpesa-integrated-blog-django-production.up.railway.app']
 
