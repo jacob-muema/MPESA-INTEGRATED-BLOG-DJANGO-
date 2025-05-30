@@ -1,0 +1,145 @@
+{% extends 'admin/base_admin.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ action }} Post - TechPulse Admin{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item"><a href="{% url 'admin_dashboard:posts' %}">Posts</a></li>
+<li class="breadcrumb-item active">{{ action }} Post</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-{% if action == 'Create' %}plus{% else %}edit{% endif %} me-2"></i>
+                    {{ action }} Post
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'admin_dashboard:posts' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Posts
+                        </a>
+                        <div>
+                            <button type="submit" name="status" value="draft" class="btn btn-outline-primary me-2">
+                                <i class="fas fa-save me-2"></i>Save as Draft
+                            </button>
+                            <button type="submit" name="status" value="published" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Publish
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title mb-0">Publishing Options</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Post Status</label>
+                    <div class="form-text">Choose whether to publish immediately or save as draft.</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Featured Post</label>
+                    <div class="form-text">Mark this post as featured to highlight it on the homepage.</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Breaking News</label>
+                    <div class="form-text">Mark as breaking news to show in the ticker.</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">SEO Tips</label>
+                    <ul class="small text-muted">
+                        <li>Use descriptive titles (50-60 characters)</li>
+                        <li>Write compelling excerpts (150-160 characters)</li>
+                        <li>Add relevant tags for better discoverability</li>
+                        <li>Include high-quality featured images</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        {% if post %}
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title mb-0">Post Statistics</h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="h4 mb-0">{{ post.views }}</div>
+                        <small class="text-muted">Views</small>
+                    </div>
+                    <div class="col-6">
+                        <div class="h4 mb-0">{{ post.comments.count }}</div>
+                        <small class="text-muted">Comments</small>
+                    </div>
+                </div>
+                <hr>
+                <div class="small text-muted">
+                    <div>Created: {{ post.created_at|date:"M d, Y H:i" }}</div>
+                    <div>Updated: {{ post.updated_at|date:"M d, Y H:i" }}</div>
+                    {% if post.published_at %}
+                    <div>Published: {{ post.published_at|date:"M d, Y H:i" }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-save functionality
+let autoSaveTimeout;
+const form = document.querySelector('form');
+const inputs = form.querySelectorAll('input, textarea, select');
+
+inputs.forEach(input => {
+    input.addEventListener('input', function() {
+        clearTimeout(autoSaveTimeout);
+        autoSaveTimeout = setTimeout(() => {
+            // Auto-save logic here
+            console.log('Auto-saving...');
+        }, 2000);
+    });
+});
+
+// Character counter for title and excerpt
+const titleField = document.getElementById('id_title');
+const excerptField = document.getElementById('id_excerpt');
+
+if (titleField) {
+    titleField.addEventListener('input', function() {
+        const length = this.value.length;
+        const optimal = length >= 30 && length <= 60;
+        // Add visual feedback
+    });
+}
+
+if (excerptField) {
+    excerptField.addEventListener('input', function() {
+        const length = this.value.length;
+        const optimal = length >= 120 && length <= 160;
+        // Add visual feedback
+    });
+}
+</script>
+{% endblock %}

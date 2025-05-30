@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'blog',
     'accounts',
     'api',
+    'admin_dashboard',  # Add the new admin dashboard app
 ]
 
 MIDDLEWARE = [
@@ -142,7 +143,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Login/Logout URLs
 LOGIN_URL = 'accounts:login'
-LOGIN_REDIRECT_URL = 'blog:home'
+LOGIN_REDIRECT_URL = 'admin_dashboard:dashboard'  # Redirect admins to dashboard
 LOGOUT_REDIRECT_URL = 'accounts:login'
 
 # Add logging configuration for M-Pesa

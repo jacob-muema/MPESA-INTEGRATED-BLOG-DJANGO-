@@ -1,0 +1,172 @@
+{% extends 'admin/base_admin.html' %}
+{% load humanize %}
+
+{% block title %}Comments Management - TechPulse Admin{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item active">Comments</li>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1><i class="fas fa-comments me-2"></i>Comments Management</h1>
+        <p class="text-muted mb-0">Moderate and manage user comments</p>
+    </div>
+</div>
+
+<!-- Filters and Search -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Search</label>
+                <input type="text" name="search" class="form-control" placeholder="Search comments..." value="{{ search_query }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All Comments</option>
+                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending Approval</option>
+                    <option value="approved" {% if status_filter == 'approved' %}selected{% endif %}>Approved</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">&nbsp;</label>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="fas fa-search me-1"></i>Filter
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Comments Table -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            Comments ({{ page_obj.paginator.count }} total)
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Comment</th>
+                        <th>Author</th>
+                        <th>Post</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for comment in page_obj %}
+                    <tr>
+                        <td>
+                            <div class="comment-content">
+                                <p class="mb-1">{{ comment.content|truncatechars:100 }}</p>
+                                {% if comment.parent %}
+                                <small class="text-muted">
+                                    <i class="fas fa-reply me-1"></i>Reply to {{ comment.parent.author.username }}
+                                </small>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                {% if comment.author.profile.avatar_url %}
+                                <img src="{{ comment.author.profile.avatar_url }}" class="rounded-circle me-2" width="32" height="32">
+                                {% else %}
+                                <div class="bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center text-white" style="width: 32px; height: 32px; font-size: 12px;">
+                                    {{ comment.author.username.0|upper }}
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <div class="fw-medium">{{ comment.author.username }}</div>
+                                    <small class="text-muted">{{ comment.author.email }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <a href="{{ comment.post.get_absolute_url }}" target="_blank" class="text-decoration-none">
+                                {{ comment.post.title|truncatechars:40 }}
+                            </a>
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ comment.is_approved|yesno:'success,warning' }}">
+                                {{ comment.is_approved|yesno:'Approved,Pending' }}
+                            </span>
+                        </td>
+                        <td>{{ comment.created_at|date:"M d, Y H:i" }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                {% if not comment.is_approved %}
+                                <a href="{% url 'admin_dashboard:approve_comment' comment.id %}" class="btn btn-sm btn-outline-success" title="Approve">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                                {% endif %}
+                                <a href="{{ comment.post.get_absolute_url }}#comment-{{ comment.id }}" class="btn btn-sm btn-outline-primary" target="_blank" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'admin_dashboard:delete_comment' comment.id %}" class="btn btn-sm btn-outline-danger" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No comments found</h5>
+                            <p class="text-muted">Comments will appear here as users engage with your content.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="card-footer">
+        <nav aria-label="Comments pagination">
+            <ul class="pagination justify-content-center mb-0">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

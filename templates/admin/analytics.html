@@ -1,0 +1,10 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block title %}Redirecting to Dashboard{% endblock %}
+
+{% block content %}
+<script>
+    window.location.href = "/dashboard/";
+</script>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block title %}Tags List{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">All Tags</h2>
+
+    {% if tags %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Slug</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tag in tags %}
+                    <tr>
+                        <td>{{ tag.name }}</td>
+                        <td>{{ tag.slug }}</td>
+                        <td>{{ tag.created_at|date:"F j, Y, g:i a" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No tags found.</p>
+    {% endif %}
+</div>
+{% endblock %}

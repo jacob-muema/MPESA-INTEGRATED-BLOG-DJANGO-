@@ -1,0 +1,306 @@
+{% extends 'admin/base_admin.html' %}
+{% load humanize %}
+
+{% block title %}Admin Dashboard - TechPulse{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1><i class="fas fa-tachometer-alt me-2"></i>Dashboard Overview</h1>
+    <p class="text-muted">Welcome back, {{ user.get_full_name|default:user.username }}. Here's what's happening with your blog.</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stat-card stat-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div class="stat-number">{{ stats.total_posts }}</div>
+                        <div class="stat-label">Total Posts</div>
+                        <div class="stat-change">
+                            <i class="fas fa-arrow-up"></i> +{{ stats.posts_this_month }} this month
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stat-card stat-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div class="stat-number">{{ stats.total_users }}</div>
+                        <div class="stat-label">Total Users</div>
+                        <div class="stat-change">
+                            <i class="fas fa-arrow-up"></i> +{{ stats.users_this_month }} this month
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stat-card stat-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div class="stat-number">{{ stats.total_comments }}</div>
+                        <div class="stat-label">Total Comments</div>
+                        <div class="stat-change">
+                            <i class="fas fa-arrow-up"></i> +{{ stats.comments_this_month }} this month
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stat-card stat-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div class="stat-number">{{ stats.total_views }}</div>
+                        <div class="stat-label">Total Views</div>
+                        <div class="stat-change">
+                            <i class="fas fa-arrow-up"></i> +{{ stats.views_this_month }} this month
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+    <div class="col-xl-8 col-lg-7">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Posts Analytics</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="postsChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-lg-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Category Distribution</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="categoryChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="row">
+    <div class="col-xl-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Recent Posts</h5>
+                <a href="{% url 'admin_dashboard:posts' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Status</th>
+                                <th>Views</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for post in recent_posts %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if post.featured_image_url %}
+                                        <img src="{{ post.featured_image_url }}" class="rounded me-2" width="40" height="40" style="object-fit: cover;">
+                                        {% else %}
+                                        <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-image text-muted"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div>
+                                            <div class="fw-medium">{{ post.title|truncatechars:40 }}</div>
+                                            {% if post.category %}
+                                            <small class="text-muted">{{ post.category.name }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ post.author.username }}</td>
+                                <td>
+                                    <span class="badge bg-{{ post.status|yesno:'success,warning' }}">
+                                        {{ post.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>{{ post.views|intcomma }}</td>
+                                <td>{{ post.created_at|date:"M d, Y" }}</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ post.get_absolute_url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{% url 'admin_dashboard:edit_post' post.slug %}" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">No posts found</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Recent Comments</h5>
+                <a href="{% url 'admin_dashboard:comments' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% for comment in recent_comments %}
+                <div class="d-flex mb-3">
+                    {% if comment.author.profile.avatar_url %}
+                    <img src="{{ comment.author.profile.avatar_url }}" class="rounded-circle me-3" width="40" height="40">
+                    {% else %}
+                    <div class="bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center text-white" style="width: 40px; height: 40px;">
+                        {{ comment.author.username.0|upper }}
+                    </div>
+                    {% endif %}
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">{{ comment.author.username }}</h6>
+                                <p class="mb-1 small">{{ comment.content|truncatechars:60 }}</p>
+                                <small class="text-muted">on {{ comment.post.title|truncatechars:30 }}</small>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'admin_dashboard:approve_comment' comment.id %}">
+                                        <i class="fas fa-check me-2"></i>Approve
+                                    </a></li>
+                                    <li><a class="dropdown-item text-danger" href="{% url 'admin_dashboard:delete_comment' comment.id %}">
+                                        <i class="fas fa-trash me-2"></i>Delete
+                                    </a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted text-center">No recent comments</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Posts Analytics Chart
+const postsCtx = document.getElementById('postsChart').getContext('2d');
+const postsChart = new Chart(postsCtx, {
+    type: 'line',
+    data: {
+        labels: {{ posts_chart_labels|safe }},
+        datasets: [{
+            label: 'Posts Published',
+            data: {{ posts_chart_data|safe }},
+            borderColor: '#0d6efd',
+            backgroundColor: 'rgba(13, 110, 253, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(0,0,0,0.1)'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+
+// Category Distribution Chart
+const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+const categoryChart = new Chart(categoryCtx, {
+    type: 'doughnut',
+    data: {
+        labels: {{ category_chart_labels|safe }},
+        datasets: [{
+            data: {{ category_chart_data|safe }},
+            backgroundColor: [
+                '#0d6efd',
+                '#198754',
+                '#ffc107',
+                '#dc3545',
+                '#6f42c1',
+                '#fd7e14'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

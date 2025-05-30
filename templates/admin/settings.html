@@ -1,0 +1,10 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block title %}Redirecting to Profile{% endblock %}
+
+{% block content %}
+<script>
+    window.location.href = "/blog/profile/";
+</script>
+{% endblock %}

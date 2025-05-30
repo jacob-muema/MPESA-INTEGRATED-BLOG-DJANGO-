@@ -13,6 +13,7 @@ urlpatterns = [
     path('blog/', include('blog.urls')),
     path('accounts/', include('accounts.urls')),
     path('api/', include('api.urls')),
+    path('dashboard/', include('admin_dashboard.urls')),  # Add admin dashboard URLs
 ]
 
 if settings.DEBUG:
