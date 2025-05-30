@@ -12,7 +12,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-your-secret-key-here'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['mpesa-integrated-blog-django-production.up.railway.app']
 CSRF_TRUSTED_ORIGINS = [
     "https://mpesa-integrated-blog-django-production.up.railway.app"
 ]
