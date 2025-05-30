@@ -28,3 +28,15 @@ INFO 2025-05-29 09:16:43,258 mpesa Access token obtained successfully
 INFO 2025-05-29 09:16:43,260 mpesa Initiating STK push for 254740491425 with amount 150
 INFO 2025-05-29 09:16:44,400 mpesa STK push initiated successfully: ws_CO_29052025121642684740491425
 INFO 2025-05-29 09:16:44,404 views STK push initiated successfully for TL: ws_CO_29052025121642684740491425
+INFO 2025-05-30 08:34:30,218 mpesa MpesaClient initialized in sandbox environment
+INFO 2025-05-30 08:34:30,219 views Initiating STK push for user alekooh, plan: Basic, phone: 254740491425
+INFO 2025-05-30 08:34:31,037 mpesa Access token obtained successfully
+INFO 2025-05-30 08:34:31,040 mpesa Initiating STK push for 254740491425 with amount 150
+INFO 2025-05-30 08:34:32,060 mpesa STK push initiated successfully: ws_CO_30052025113635048740491425
+INFO 2025-05-30 08:34:32,062 views STK push initiated successfully for alekooh: ws_CO_30052025113635048740491425
+INFO 2025-05-30 08:34:52,455 mpesa MpesaClient initialized in sandbox environment
+INFO 2025-05-30 08:34:52,455 views Initiating STK push for user alekooh, plan: Premium, phone: 254740491425
+INFO 2025-05-30 08:34:53,255 mpesa Access token obtained successfully
+INFO 2025-05-30 08:34:53,258 mpesa Initiating STK push for 254740491425 with amount 250
+ERROR 2025-05-30 08:34:54,074 mpesa STK push failed: {'requestId': 'b18f-4a07-9aff-d6e1fb096b51273052', 'errorCode': '500.001.1001', 'errorMessage': 'Unable to lock subscriber, a transaction is already in process for the current subscriber'}
+ERROR 2025-05-30 08:34:54,076 views STK push failed for alekooh: {'requestId': 'b18f-4a07-9aff-d6e1fb096b51273052', 'errorCode': '500.001.1001', 'errorMessage': 'Unable to lock subscriber, a transaction is already in process for the current subscriber'}
