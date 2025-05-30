@@ -5,7 +5,7 @@ import logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-CSRF_TRUSTED_ORIGINS= ["https://mpesa-integrated-blog-django-production.up.railway.app/"]
+CSRF_TRUSTED_ORIGINS= ["https://mpesa-integrated-blog-django-production.up.railway.app"]
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-your-secret-key-here')
 
@@ -15,7 +15,7 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 # In settings.py
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://mpesa-integrated-blog-django-production.up.railway.app/",
+    "https://mpesa-integrated-blog-django-production.up.railway.app",
     "http://localhost:3000",
 ]
 
