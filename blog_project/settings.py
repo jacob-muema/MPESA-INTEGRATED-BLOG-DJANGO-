@@ -2,28 +2,34 @@ import os
 from pathlib import Path
 from decouple import config
 import logging
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-CSRF_TRUSTED_ORIGINS= ["https://mpesa-integrated-blog-django-production.up.railway.app"]
+
+# CSRF Trusted Origins - must include scheme and domain
+CSRF_TRUSTED_ORIGINS = [
+    "https://mpesa-integrated-blog-django-production.up.railway.app"
+]
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-your-secret-key-here')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-# In settings.py
-
-
-
+# Allowed hosts for this Django project
 ALLOWED_HOSTS = ['mpesa-integrated-blog-django-production.up.railway.app']
 
+# Cookies security settings
 CSRF_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 
-CORS_ALLOW_CREDENTIALS = True  # if you use cross-origin cookies
+# If you want SESSION_COOKIE_SECURE always True regardless of DEBUG, replace above with:
+# SESSION_COOKIE_SECURE = True
 
-SESSION_COOKIE_SECURE = True
+# Allow credentials for cross-origin requests (cookies, authorization headers, TLS client certificates)
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 INSTALLED_APPS = [
@@ -34,14 +40,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    
+
     # Third party apps
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
     'crispy_forms',
     'crispy_bootstrap5',
-    
+
     # Local apps
     'blog',
     'accounts',
@@ -81,7 +87,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'blog_project.wsgi.application'
 
-# Database
+# Database configuration
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -89,7 +95,7 @@ DATABASES = {
     }
 }
 
-# Password validation
+# Password validation settings
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -124,7 +130,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# REST Framework settings
+# Django REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -133,11 +139,10 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
 }
 
 # JWT Settings
-from datetime import timedelta
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
@@ -148,9 +153,10 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://mpesa-integrated-blog-django-production.up.railway.app",  # Added your production domain
 ]
 
-# Crispy Forms
+# Crispy Forms settings
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
@@ -159,7 +165,7 @@ LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'admin_dashboard:dashboard'  # Redirect admins to dashboard
 LOGOUT_REDIRECT_URL = 'accounts:login'
 
-# Add logging configuration for M-Pesa
+# Logging configuration for M-Pesa
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -191,5 +197,5 @@ LOGGING = {
     },
 }
 
-# Ensure logs directory exists
+# Ensure logs directory exists before logging starts
 os.makedirs('logs', exist_ok=True)
