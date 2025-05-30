@@ -12,15 +12,20 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-your-secret-key-here'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['mpesa-integrated-blog-django-production.up.railway.app']
+# In settings.py
 
 CSRF_TRUSTED_ORIGINS = [
     "https://mpesa-integrated-blog-django-production.up.railway.app",
-    "http://localhost:3000",  # optional: only if you're testing frontend locally
+    "http://localhost:3000",
 ]
 
-# Add these lines for HTTPS support (important for Railway)
-CSRF_COOKIE_SECURE = True
+ALLOWED_HOSTS = ['mpesa-integrated-blog-django-production.up.railway.app']
+
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+
+CORS_ALLOW_CREDENTIALS = True  # if you use cross-origin cookies
+
 SESSION_COOKIE_SECURE = True
 
 # Application definition
