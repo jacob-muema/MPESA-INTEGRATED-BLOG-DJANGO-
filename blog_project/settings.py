@@ -13,6 +13,10 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-your-secret-key-here'
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = [
+    "https://mpesa-integrated-blog-django-production.up.railway.app"
+]
+
 
 # Application definition
 INSTALLED_APPS = [
