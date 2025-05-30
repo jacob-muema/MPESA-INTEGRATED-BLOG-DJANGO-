@@ -2,13 +2,18 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib import messages
 from django.contrib.auth.views import LoginView
-from django.urls import reverse_lazy
+from django.urls import reverse
 from .forms import CustomUserCreationForm
 
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
     redirect_authenticated_user = True
-    success_url = reverse_lazy('blog:home')
+
+    def get_success_url(self):
+        user = self.request.user
+        if user.is_superuser or user.is_staff:
+            return reverse('admin_dashboard:dashboard')  # Redirect admin users here
+        return reverse('blog:home')  # Redirect regular users here
 
 def register(request):
     if request.method == 'POST':
